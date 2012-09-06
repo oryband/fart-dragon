@@ -1,0 +1,15 @@
+# Python
+*.py[co]
+
+# virtualenv
+/venv
+
+# ctags
+/tags
+
+# OSX finder
+.DS_Store
+
+# Vim
+*.swp
+
