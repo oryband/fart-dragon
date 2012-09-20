@@ -1,20 +1,22 @@
 #!/usr/bin/env python
 # encoding: utf8
 
-import sys
-from math import copysign
+from renderer import Renderer, ImageType
 
 import pygame
 # TODO: Fix flake8 error
 from pygame.locals import K_SPACE, K_ESCAPE
 
+import sys
+from math import copysign
 
-BLACK = pygame.Color('black')
-RES = (800, 600)
-TICK = 30
-X_INIT, Y_ROOF, Y_FLOOR = 50, 50, RES[1] -50
-MAX_SPEED = 13
-ACC = 2
+
+MULTIPLIER = 71
+RES = (16 * MULTIPLIER, 9 * MULTIPLIER)
+FPS = 60
+X_INIT, Y_ROOF, Y_FLOOR = 50, 50, RES[1] - 90
+MAX_SPEED = 8
+ACC = 1
 
 
 def input(events):
@@ -47,39 +49,26 @@ def simulation(y, speed, acc):
     return new_y, speed
 
 
-def render(dragon, x, y):
-    screen.fill(BLACK)
-    screen.blit(dragon, (x, y))
-    pygame.display.flip()
-
-
-def load_images(images):
-    # TODO: error handeling (copy from chimp tut).
-    im_list = []
-    for im in images:
-        im_list.append(pygame.image.load(im))
-
-    return im_list
-
-
 if __name__ == '__main__':
     # Init.
     screen = pygame.display.set_mode(RES)
     clock = pygame.time.Clock()
-    pygame.key.set_repeat(0, 5)
 
-    images = load_images(('dragon.png',))
-    dragon = images[0]
+    renderer = Renderer(screen)
 
-    x, y = X_INIT, Y_ROOF
+    #bg_1 = renderer.load_image('background.png', ImageType.BG)
+    #bg_2 = renderer.load_image('background.png', ImageType.BG)
+    dragon = renderer.load_image('dragon.png', ImageType.PLAYER)
+
+    #bg_1['x'], bg_1['y'] = 0, 0
+    #bg_2['x'], bg_1['y'] = bg_1['x'].get_width(), 0
+    dragon['x'], dragon['y'] = X_INIT, Y_ROOF
+
     speed = 0
-
-    screen.blit(dragon, (x, y))
-    pygame.display.flip()
 
     # Game loop.
     while True:
-        clock.tick(TICK)
+        clock.tick(FPS)
         acc = input(pygame.event.get())
-        y, speed = simulation(y, speed, acc)
-        render(dragon, x, y)
+        dragon['y'], speed = simulation(dragon['y'], speed, acc)
+        renderer.render()
