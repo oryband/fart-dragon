@@ -5,9 +5,12 @@ import pygame
 from pygame.locals import RLEACCEL
 
 
+MLTPLY = 71
+RES = (16 * MLTPLY, 9 * MLTPLY)
 BLACK = pygame.Color('black')
 
 
+# Enum
 class ImageType:
     BG = 0,
     PLAYER = 1
@@ -20,7 +23,7 @@ class Renderer():
             ImageType.PLAYER: []
         }
 
-        self.__screen = screen
+        self.__screen = pygame.display.set_mode(RES)
 
     def load_image(self, path, tyype, color_key=None):
         try:
@@ -47,8 +50,14 @@ class Renderer():
     def render(self):
         self.__screen.fill(BLACK)
 
-        for i in self.__images[ImageType.BG]:
-            self.__screen.blit(i)
+        bg_1 = self.__images[ImageType.BG]
+        bg_2 = self.__images[ImageType.BG]
+
+        if bg_1['x'] <= -1 * bg_1.get_width():
+            bg_1['x'] = bg_2['x'] + bg_2.get_width()
+
+        if bg_2['x'] <= -1 * bg_2.get_width():
+            bg_2['x'] = bg_1['x'] + bg_1.get_width()
 
         for o in self.__images[ImageType.PLAYER]:
             self.__screen.blit(o['image'], (o['x'], o['y']))
